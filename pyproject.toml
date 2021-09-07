@@ -3,6 +3,9 @@ name = "aionetrunner"
 version = "0.1.0"
 description = "Network asyncio command runner using Scrapli"
 authors = ["Ryan Bradshaw <ryan@rbradshaw.dev>"]
+packages = [
+  { include = "netrunner" }
+]
 
 
 [tool.poetry.dependencies]
