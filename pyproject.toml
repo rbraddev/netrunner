@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "aionetrunner"
+version = "0.1.0"
+description = "Network asyncio command runner using Scrapli"
+authors = ["Ryan Bradshaw <ryan@rbradshaw.dev>"]
+
+
+[tool.poetry.dependencies]
+python = "^3.7"
+scrapli = "^2021.1.30"
+asyncssh = "^2.7.0"
+pyats = "^21.8"
+genie = "^21.8"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+bpython = "^0.21"
+black = "^21.6b0"
+flake8 = "^3.9.2"
+isort = "^5.9.3"
+tox = "^3.24.3"
+
+[tool.black]
+line-length = 120
+target-version = ['py39']
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+]
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py37, py38, py39
+isolated_build = True
+skip_missing_interpreters = True
+
+[testenv]
+whitelist_externals = poetry
+commands =
+  poetry install
+  pytest
+"""
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
