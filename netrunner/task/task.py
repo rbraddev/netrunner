@@ -1,4 +1,5 @@
 import asyncio
+import random
 from typing import *  # noqa: F403
 
 from netrunner.host import FailedHost, Host
@@ -28,6 +29,7 @@ class Task:
             pass
         except Exception as e:
             self.response.failed.append(FailedHost(host.hostname, host.ip, self.name, getattr(e, "message", str(e))))
+            # self.response.failed.append(FailedHost(host.hostname, host.ip, self.name, e))
 
     async def run_task(self, debug: bool):
         """Starts the task running"""
@@ -35,14 +37,3 @@ class Task:
         self.response.result.update({self.name: {}})
 
         await asyncio.gather(*[self._run_task(host) for host in self.hosts], return_exceptions=True)
-
-    def _handle_task_result(self, task: asyncio.Task) -> None:
-        """handles the asyncio task callback once task has finshed"""
-        try:
-            hostname = task.get_name().split(":")[1]
-            self.response.result.update({hostname: task.result()})
-        except asyncio.CancelledError:
-            pass
-        except Exception as e:
-            task_name, device, ip = task.get_name().split(":")
-            self.response.failed.append(FailedHost(device, ip, task_name, getattr(e, "message", str(e))))

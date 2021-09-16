@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from ipaddress import AddressValueError, IPv4Address
 from typing import *  # noqa: F403
+import random, asyncio
 
 from netrunner.connections import SSH
 from netrunner.connections.ssh import PLATFORM
@@ -29,9 +30,24 @@ class Host:
     def __repr__(self):
         return f"Host(Hostname: {self.hostname}, IP: {self.ip})"
 
+    def __eq__(self, other):
+        return all(
+            [
+                self.__class__ == other.__class__,
+                self.ip == other.ip,
+            ]
+        )
+
+    def __hash__(self):
+        return hash(self.ip)
+
     async def send_command(self, cmds: list, parse: bool = True) -> Union[str, dict]:
-        async with self.connection.connection_manager() as con:
-            results = {cmd: await con.send_command(cmd, parse) for cmd in cmds}
+        print("inside send")
+        # async with self.connection.get_connection() as con:
+        #     prompt = await self.connection._con.get_prompt()
+        #     print(prompt)
+        await self.connection.open()
+        results = {cmd: await self.connection.send_command(cmd, parse) for cmd in cmds}
         return results
 
 

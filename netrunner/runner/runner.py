@@ -4,8 +4,7 @@ from typing import *  # noqa: F403
 
 from netrunner.host import Host
 from netrunner.runner import Credentials, Response
-from netrunner.runner.errors import (InvalidHostKeys, InvalidTask,
-                                     NoHostsPresent)
+from netrunner.runner.errors import InvalidHostKeys, InvalidTask, NoHostsPresent
 from netrunner.task import Task
 
 
@@ -17,21 +16,40 @@ class Runner:
     ) -> None:
         """Initialise task runner. Requires username and password"""
         self.credentials: Credentials = Credentials(username=username, password=password, enable=enable)
-        self.hosts: list[Host] = self.get_hosts(hosts) if hosts else []
+        self.hosts: List[Host] = self.get_hosts(hosts) if hosts else []
         self.debug: bool = debug
         self.tasks: Set[Task] = set()
         self.response: Response = Response()
 
-    def get_hosts(self, hosts: List[Dict]) -> None:
-        """Add hosts to host list"""
+        if hosts:
+            self.get_hosts(hosts)
+
+    def get_hosts(self, hosts: List[Dict]) -> List[Host]:
+        """Add hosts to task host list, reuses existing host objects"""
+        # host_list = []
+
+        # for host in hosts:
+        #     try:
+        #         new_host = Host(
+        #             hostname=host["hostname"], ip=host["ip"], platform=host["platform"], credentials=self.credentials
+        #         )
+        #     except KeyError:
+        #         raise InvalidHostKeys("Invalid or missing keys in host list")
+
+        #     try:
+        #         existing_host = next((h for h in self.hosts if h == new_host))
+        #         host_list.append(existing_host)
+        #     except StopIteration:
+        #         self.hosts.append(new_host)
+        #         host_list.append(new_host)
         try:
-            hosts = [
+            host_list = [
                 Host(hostname=host["hostname"], ip=host["ip"], platform=host["platform"], credentials=self.credentials)
                 for host in hosts
             ]
         except KeyError:
             raise InvalidHostKeys("Invalid or missing keys in host list")
-        return hosts
+        return host_list
 
     def _validate_task(self, name: str, task: Callable, hosts: List[Dict]) -> bool:
         if not isinstance(task, Callable):
@@ -53,6 +71,10 @@ class Runner:
             self.queue_task(name, task, hosts, **params)
 
         self.response.start_time = perf_counter()
-        await asyncio.gather(*[task.run_task(self.debug) for task in self.tasks])
+        try:
+            await asyncio.gather(*[task.run_task(self.debug) for task in self.tasks])
+        except KeyboardInterrupt:
+            [await host.connection.close() for host in self.hosts if host.connection.is_alive]
+
         self.response.end_time = perf_counter()
         return self.response
