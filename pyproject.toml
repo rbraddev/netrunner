@@ -13,7 +13,6 @@ genie = "^21.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
-bpython = "^0.21"
 black = "^21.6b0"
 flake8 = "^3.9.2"
 isort = "^5.9.3"

@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from pprint import pprint
 
 from scrapli.logging import enable_basic_logging
@@ -7,22 +6,21 @@ from scrapli.logging import enable_basic_logging
 from netrunner.host import Host
 from netrunner.runner import Response, Runner
 
-logging.basicConfig(filename="scrapli.log", level=logging.DEBUG)
 enable_basic_logging(file=True, level="debug")
 
 devices = [
     {"hostname": "RT1001", "ip": "10.0.0.1", "platform": "ios"},
-    # {"hostname": "RT1002", "ip": "10.0.1.2", "platform": "ios"},
-    # {"hostname": "RT2001", "ip": "10.0.1.3", "platform": "ios"},
-    # {"hostname": "RT2002", "ip": "10.0.2.4", "platform": "ios"},
-    # {"hostname": "RT1011", "ip": "10.0.0.5", "platform": "ios"},
-    # {"hostname": "RT1021", "ip": "10.0.0.6", "platform": "ios"},
-    # {"hostname": "RT1031", "ip": "10.0.0.7", "platform": "ios"},
-    # {"hostname": "SW1011", "ip": "10.0.0.8", "platform": "ios"},
-    # {"hostname": "SW1021", "ip": "10.0.0.9", "platform": "ios"},
-    # {"hostname": "SW1031", "ip": "10.0.0.10", "platform": "ios"},
-    # {"hostname": "NX1001", "ip": "10.0.0.11", "platform": "nxos"},
-    # {"hostname": "NX2001", "ip": "10.0.0.12", "platform": "nxos"},
+    {"hostname": "RT1002", "ip": "10.0.1.2", "platform": "ios"},
+    {"hostname": "RT2001", "ip": "10.0.1.3", "platform": "ios"},
+    {"hostname": "RT2002", "ip": "10.0.2.4", "platform": "ios"},
+    {"hostname": "RT1011", "ip": "10.0.0.5", "platform": "ios"},
+    {"hostname": "RT1021", "ip": "10.0.0.6", "platform": "ios"},
+    {"hostname": "RT1031", "ip": "10.0.0.7", "platform": "ios"},
+    {"hostname": "SW1011", "ip": "10.0.0.8", "platform": "ios"},
+    {"hostname": "SW1021", "ip": "10.0.0.9", "platform": "ios"},
+    {"hostname": "SW1031", "ip": "10.0.0.10", "platform": "ios"},
+    {"hostname": "NX1001", "ip": "10.0.0.11", "platform": "nxos"},
+    {"hostname": "NX2001", "ip": "10.0.0.12", "platform": "nxos"},
 ]
 
 devices1 = [
