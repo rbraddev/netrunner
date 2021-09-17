@@ -31,27 +31,27 @@ class SSH(Base):
     async def open(self):
         if self._con is None:
             self.get_driver()
-        await self._con.open()
+        if not self._con.isalive():
+            await self._con.open()
 
     async def close(self):
         await self._con.close()
 
     @asynccontextmanager
-    async def connection_manager(self):
+    async def get_connection(self):
         await self.open()
-        print("connection open")
         yield self
         await self.close()
-        print("connection closed")
 
-    async def get_connection(self):
-        if not self._con.isalive():
-            await self.open()
-        return self._con
+    @property
+    def is_alive(self) -> bool:
+        if self._con is not None:
+            if self._con.isalive():
+                return True
+        return False
 
     async def send_command(self, cmd: str, parse: bool = True) -> Union[Dict, str]:
-        connection: AsyncNetworkDriver = await self.get_connection()
-        result = await connection.send_command(cmd)
+        result = await self._con.send_command(cmd)
         if parse:
             return result.genie_parse_output()
         return result.result

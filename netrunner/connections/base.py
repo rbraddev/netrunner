@@ -11,9 +11,5 @@ class Base(ABC):
         pass
 
     @abstractmethod
-    async def connection_manager(self):
-        pass
-
-    @abstractmethod
     async def get_connection(self):
         pass

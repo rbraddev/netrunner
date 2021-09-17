@@ -18,11 +18,13 @@ class Task:
         if self.debug:
             print(f"Starting task for {host.hostname}")
         try:
+            host.set_connection(task_name=self.task.__name__)
             result = (
-                await asyncio.create_task(self.task(host, **self.params))
+                await asyncio.create_task(self.task(host, **self.params), name=f"{host.ip}:{self.name}")
                 if self.params
-                else await asyncio.create_task(self.task(host))
+                else await asyncio.create_task(self.task(host), name=f"{host.ip}:{self.name}")
             )
+            await host.connections.get(self.task.__name__).close()
             self.response.result[self.name].update({host.hostname: result})
         except asyncio.CancelledError:
             pass
@@ -33,16 +35,4 @@ class Task:
         """Starts the task running"""
         self.debug = debug
         self.response.result.update({self.name: {}})
-
         await asyncio.gather(*[self._run_task(host) for host in self.hosts], return_exceptions=True)
-
-    def _handle_task_result(self, task: asyncio.Task) -> None:
-        """handles the asyncio task callback once task has finshed"""
-        try:
-            hostname = task.get_name().split(":")[1]
-            self.response.result.update({hostname: task.result()})
-        except asyncio.CancelledError:
-            pass
-        except Exception as e:
-            task_name, device, ip = task.get_name().split(":")
-            self.response.failed.append(FailedHost(device, ip, task_name, getattr(e, "message", str(e))))

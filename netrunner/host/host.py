@@ -1,3 +1,5 @@
+import functools
+import inspect
 from dataclasses import dataclass
 from ipaddress import AddressValueError, IPv4Address
 from typing import *  # noqa: F403
@@ -6,6 +8,18 @@ from netrunner.connections import SSH
 from netrunner.connections.ssh import PLATFORM
 from netrunner.host.errors import InvalidIPAddress, InvalidPlatform
 from netrunner.runner import Credentials
+
+
+def connection_required(func):
+    @functools.wraps(func)
+    async def wrapper(*args):
+        function_list = [f.function for f in inspect.getouterframes(inspect.currentframe())]
+        connection = args[0].connections.get(function_list[function_list.index("_run") - 1])
+        await connection.open()
+        result = await func(*args, connection=connection)
+        return result
+
+    return wrapper
 
 
 class Host:
@@ -18,20 +32,39 @@ class Host:
         except AddressValueError:
             raise InvalidIPAddress(f"Host: {hostname} - has an invalid ip address of {ip}")
         self.platform: str = platform
-        self.connection: SSH = SSH(
-            host=ip,
-            platform=platform,
-            username=credentials.username,
-            password=credentials.password,
-            enable=credentials.enable,
-        )
+        self.credentials: Credentials = credentials
+        self.connections: Dict[str, SSH] = {}
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Host(Hostname: {self.hostname}, IP: {self.ip})"
 
-    async def send_command(self, cmds: list, parse: bool = True) -> Union[str, dict]:
-        async with self.connection.connection_manager() as con:
-            results = {cmd: await con.send_command(cmd, parse) for cmd in cmds}
+    def __eq__(self, other) -> bool:
+        return all(
+            [
+                self.__class__ == other.__class__,
+                self.ip == other.ip,
+            ]
+        )
+
+    def __hash__(self):
+        return hash(self.ip)
+
+    def set_connection(self, task_name: str):
+        self.connections.update(
+            {
+                task_name: SSH(
+                    host=self.ip,
+                    username=self.credentials.username,
+                    password=self.credentials.password,
+                    enable=self.credentials.enable,
+                    platform=self.platform,
+                )
+            }
+        )
+
+    @connection_required
+    async def send_command(self, cmds: list, parse: bool = True, connection: SSH = None) -> Union[str, dict]:
+        results = {cmd: await connection.send_command(cmd, parse) for cmd in cmds}
         return results
 
 
