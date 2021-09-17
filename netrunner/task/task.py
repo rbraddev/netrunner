@@ -1,5 +1,4 @@
 import asyncio
-import random
 from typing import *  # noqa: F403
 
 from netrunner.host import FailedHost, Host
@@ -19,21 +18,21 @@ class Task:
         if self.debug:
             print(f"Starting task for {host.hostname}")
         try:
+            host.set_connection(task_name=self.task.__name__)
             result = (
-                await asyncio.create_task(self.task(host, **self.params))
+                await asyncio.create_task(self.task(host, **self.params), name=f"{host.ip}:{self.name}")
                 if self.params
-                else await asyncio.create_task(self.task(host))
+                else await asyncio.create_task(self.task(host), name=f"{host.ip}:{self.name}")
             )
+            await host.connections.get(self.task.__name__).close()
             self.response.result[self.name].update({host.hostname: result})
         except asyncio.CancelledError:
             pass
         except Exception as e:
             self.response.failed.append(FailedHost(host.hostname, host.ip, self.name, getattr(e, "message", str(e))))
-            # self.response.failed.append(FailedHost(host.hostname, host.ip, self.name, e))
 
     async def run_task(self, debug: bool):
         """Starts the task running"""
         self.debug = debug
         self.response.result.update({self.name: {}})
-
         await asyncio.gather(*[self._run_task(host) for host in self.hosts], return_exceptions=True)

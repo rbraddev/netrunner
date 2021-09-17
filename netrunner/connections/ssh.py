@@ -1,10 +1,8 @@
-import asyncio, random
 from contextlib import asynccontextmanager
 from typing import *  # noqa: F403
 
 from scrapli.driver.core import AsyncIOSXEDriver, AsyncNXOSDriver
 from scrapli.driver.network.async_driver import AsyncNetworkDriver
-from scrapli.exceptions import ScrapliTimeout
 
 from netrunner.connections.base import Base
 
@@ -34,14 +32,7 @@ class SSH(Base):
         if self._con is None:
             self.get_driver()
         if not self._con.isalive():
-            # self._con.timeout_socket = 1.0
-            for _ in range(5):
-                try:
-                    await self._con.open()
-                    break
-                except ScrapliTimeout:
-                    await asyncio.sleep(random.random())
-
+            await self._con.open()
 
     async def close(self):
         await self._con.close()

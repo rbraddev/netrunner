@@ -4,7 +4,8 @@ from typing import *  # noqa: F403
 
 from netrunner.host import Host
 from netrunner.runner import Credentials, Response
-from netrunner.runner.errors import InvalidHostKeys, InvalidTask, NoHostsPresent
+from netrunner.runner.errors import (InvalidHostKeys, InvalidTask,
+                                     NoHostsPresent)
 from netrunner.task import Task
 
 
@@ -26,29 +27,22 @@ class Runner:
 
     def get_hosts(self, hosts: List[Dict]) -> List[Host]:
         """Add hosts to task host list, reuses existing host objects"""
-        # host_list = []
+        host_list = []
 
-        # for host in hosts:
-        #     try:
-        #         new_host = Host(
-        #             hostname=host["hostname"], ip=host["ip"], platform=host["platform"], credentials=self.credentials
-        #         )
-        #     except KeyError:
-        #         raise InvalidHostKeys("Invalid or missing keys in host list")
+        for host in hosts:
+            try:
+                new_host = Host(
+                    hostname=host["hostname"], ip=host["ip"], platform=host["platform"], credentials=self.credentials
+                )
+            except KeyError:
+                raise InvalidHostKeys("Invalid or missing keys in host list")
 
-        #     try:
-        #         existing_host = next((h for h in self.hosts if h == new_host))
-        #         host_list.append(existing_host)
-        #     except StopIteration:
-        #         self.hosts.append(new_host)
-        #         host_list.append(new_host)
-        try:
-            host_list = [
-                Host(hostname=host["hostname"], ip=host["ip"], platform=host["platform"], credentials=self.credentials)
-                for host in hosts
-            ]
-        except KeyError:
-            raise InvalidHostKeys("Invalid or missing keys in host list")
+            try:
+                existing_host = next((h for h in self.hosts if h == new_host))
+                host_list.append(existing_host)
+            except StopIteration:
+                self.hosts.append(new_host)
+                host_list.append(new_host)
         return host_list
 
     def _validate_task(self, name: str, task: Callable, hosts: List[Dict]) -> bool:
