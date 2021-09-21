@@ -4,8 +4,7 @@ from typing import *  # noqa: F403
 
 from netrunner.host import Host
 from netrunner.runner import Credentials, Response
-from netrunner.runner.errors import (InvalidHostKeys, InvalidTask,
-                                     NoHostsPresent)
+from netrunner.runner.errors import InvalidHostKeys, InvalidTask, NoHostsPresent
 from netrunner.task import Task
 
 

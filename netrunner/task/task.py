@@ -20,9 +20,9 @@ class Task:
         try:
             host.set_connection(task_name=self.task.__name__)
             result = (
-                await asyncio.create_task(self.task(host, **self.params), name=f"{host.ip}:{self.name}")
+                await asyncio.create_task(self.task(host, **self.params))
                 if self.params
-                else await asyncio.create_task(self.task(host), name=f"{host.ip}:{self.name}")
+                else await asyncio.create_task(self.task(host))
             )
             await host.connections.get(self.task.__name__).close()
             self.response.result[self.name].update({host.hostname: result})

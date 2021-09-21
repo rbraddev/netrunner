@@ -10,9 +10,9 @@ enable_basic_logging(file=True, level="debug")
 
 devices = [
     {"hostname": "RT1001", "ip": "10.0.0.1", "platform": "ios"},
-    {"hostname": "RT1002", "ip": "10.0.1.2", "platform": "ios"},
-    {"hostname": "RT2001", "ip": "10.0.1.3", "platform": "ios"},
-    {"hostname": "RT2002", "ip": "10.0.2.4", "platform": "ios"},
+    # {"hostname": "RT1002", "ip": "10.0.1.2", "platform": "ios"},
+    # {"hostname": "RT2001", "ip": "10.0.1.3", "platform": "ios"},
+    # {"hostname": "RT2002", "ip": "10.0.2.4", "platform": "ios"},
     {"hostname": "RT1011", "ip": "10.0.0.5", "platform": "ios"},
     {"hostname": "RT1021", "ip": "10.0.0.6", "platform": "ios"},
     {"hostname": "RT1031", "ip": "10.0.0.7", "platform": "ios"},
@@ -38,7 +38,8 @@ devices2 = [
 ]
 
 
-async def show_interfaces(host: Host):
+async def show_interfaces(host: Host, testval):
+    print(testval)
     if host.platform == "nxos":
         result = await host.send_command(["show interface"])
     else:
@@ -75,7 +76,7 @@ async def main():
     # print([f.__dict__ for f in failed])
     # runner.queue_task(name="show interfaces", task=show_interfaces, hosts=devices1)
     # runner.queue_task(name="show version", task=show_version, hosts=devices2)
-    runner.queue_task(name="show interfaces", task=show_interfaces, hosts=devices)
+    runner.queue_task(name="show interfaces", task=show_interfaces, hosts=devices, testval="testvaloutput")
     runner.queue_task(name="show version", task=show_version, hosts=devices)
 
     response: Response = await runner.run()
