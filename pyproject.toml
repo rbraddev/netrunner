@@ -5,7 +5,7 @@ description = "Network asyncio command runner using Scrapli"
 authors = ["Ryan Bradshaw <ryan@rbradshaw.dev>"]
 repository = "https://github.com/rbraddev/netrunner"
 readme = "README.md"
-keywords = ["network", "automation", "nxos", "ios" "iosxe", "ssh", "cisco"]
+keywords = ["network", "automation", "nxos", "ios", "iosxe", "ssh", "cisco"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
