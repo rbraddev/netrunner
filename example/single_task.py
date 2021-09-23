@@ -11,7 +11,7 @@ hosts = [
 ]
 
 
-def get_version(platform, result):
+def get_version(platform, result) -> str:
     if platform == "ios":
         version = result["version"]["version_short"]
     if platform == "nxos":
@@ -19,7 +19,7 @@ def get_version(platform, result):
     return version
 
 
-async def task1(host: Host, vlan: str):
+async def task1(host: Host, vlan: str) -> dict:
     result = await host.send_command(cmds=["show version", "show vlan"])
     return {
         "version": get_version(host.platform, result["show version"]),

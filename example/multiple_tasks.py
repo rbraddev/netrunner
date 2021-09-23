@@ -14,12 +14,12 @@ nxos_hosts = [
 ]
 
 
-async def get_ip_ios(host: Host):
+async def get_ip_ios(host: Host) -> dict:
     result = await host.send_command(["show ip interface brief"])
     return {"ip": result["show ip interface brief"]["interface"]["GigabitEthernet1/0"]["ip_address"]}
 
 
-async def get_ip_nxos(host: Host, vrf: str):
+async def get_ip_nxos(host: Host, vrf: str) -> dict:
     result = await host.send_command([f"show ip interface vrf {vrf}"])
     return {
         "ip": result[f"show ip interface vrf {vrf}"]["mgmt0"]["ipv4"][
