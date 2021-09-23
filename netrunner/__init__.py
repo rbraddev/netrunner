@@ -1,3 +1,3 @@
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 from netrunner.runner.response import Response  # noqa: F401
 from netrunner.runner.runner import Runner  # noqa: F401
