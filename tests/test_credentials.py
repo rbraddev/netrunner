@@ -1,6 +1,6 @@
 import pytest
 
-from netrunner.runner import Credentials, credentials
+from netrunner.runner import Credentials
 
 
 def test_credentials_valid_no_enable():
@@ -21,4 +21,4 @@ def test_credentials_valid_with_enable():
 
 def test_credentails_missing_value():
     with pytest.raises(TypeError):
-        credentials = Credentials(password="test_pass")
+        credentials = Credentials(password="test_pass")  # noqa: F841

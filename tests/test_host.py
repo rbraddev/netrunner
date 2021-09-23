@@ -1,10 +1,10 @@
 import pytest
 from scrapli.driver.network import AsyncNetworkDriver
 
-from netrunner.host import Host
-from netrunner.host.errors import InvalidPlatform, InvalidIPAddress
-from netrunner.runner import Credentials
 from netrunner.connections import SSH
+from netrunner.host import Host
+from netrunner.host.errors import InvalidIPAddress, InvalidPlatform
+from netrunner.runner import Credentials
 
 
 def test_host_obj_init_pass():
@@ -24,7 +24,7 @@ def test_host_obj_init_pass():
 
 def test_host_obj_invalid_platform():
     with pytest.raises(InvalidPlatform):
-        host = Host(
+        host = Host(  # noqa: F841
             hostname="RT001",
             ip="10.0.0.1",
             platform="invalid_platform",
@@ -34,7 +34,7 @@ def test_host_obj_invalid_platform():
 
 def test_host_obj_invalid_ip():
     with pytest.raises(InvalidIPAddress):
-        host = Host(
+        host = Host(  # noqa: F841
             hostname="RT001",
             ip="not an ip",
             platform="ios",
@@ -85,7 +85,4 @@ async def test_host_send_command(host_obj: Host, monkeypatch: pytest.MonkeyPatch
         ["show version", "show interface status"], parse=True, connection=host_obj.connections["test task"]
     )
 
-    assert result == {
-        "show version": "show version output",
-        "show interface status": "show interface status output"
-    }
+    assert result == {"show version": "show version output", "show interface status": "show interface status output"}

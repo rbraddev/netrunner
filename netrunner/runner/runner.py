@@ -4,7 +4,8 @@ from typing import *  # noqa: F403
 
 from netrunner.host import Host
 from netrunner.runner import Credentials, Response
-from netrunner.runner.errors import InvalidHostKeys, InvalidTask, NoHostsPresent
+from netrunner.runner.errors import (InvalidHostKeys, InvalidTask,
+                                     NoHostsPresent)
 from netrunner.task import Task
 
 
@@ -21,12 +22,13 @@ class Runner:
         self.tasks: Set[Task] = set()
         self.response: Response = Response()
 
-        if hosts:
-            self.get_hosts(hosts)
+        # if hosts:
+        #     self.get_hosts(hosts)
 
     def get_hosts(self, hosts: List[Dict]) -> List[Host]:
         """Add hosts to task host list, reuses existing host objects"""
         host_list = []
+        self.hosts = []
 
         for host in hosts:
             try:

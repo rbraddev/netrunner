@@ -1,7 +1,6 @@
 import pytest
-
-from scrapli.driver.core import AsyncIOSXEDriver, AsyncNXOSDriver
 from scrapli.driver import AsyncNetworkDriver
+from scrapli.driver.core import AsyncIOSXEDriver, AsyncNXOSDriver
 
 from netrunner.connections import SSH
 
@@ -12,12 +11,12 @@ def test_obj_init_pass(ssh_obj):
     assert ssh_obj.password == "test_pass"
     assert ssh_obj.enable == "test_enable"
     assert ssh_obj.platform == "ios"
-    assert ssh_obj._con == None
+    assert ssh_obj._con is None
 
 
 def test_obj_init_missing_params():
     with pytest.raises(TypeError):
-        connection = SSH(host="10.0.0.1", password="test_pass", enable="test_enable", platform="ios")
+        connection = SSH(host="10.0.0.1", password="test_pass", enable="test_enable", platform="ios")  # noqa: F841
 
 
 @pytest.mark.parametrize("platform, platform_obj", [["ios", AsyncIOSXEDriver], ["nxos", AsyncNXOSDriver]])

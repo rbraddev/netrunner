@@ -15,11 +15,9 @@ def connection_required(func):
     async def wrapper(*args, **kwargs):
         if "connection" not in kwargs.keys():
             function_list = [f.function for f in inspect.getouterframes(inspect.currentframe())]
-            connection = args[0].connections.get(function_list[function_list.index("_run") - 1])
-        else:
-            connection = kwargs.get("connection")
-        await connection.open()
-        result = await func(*args, connection=connection)
+            kwargs["connection"] = args[0].connections.get(function_list[function_list.index("_run") - 1])
+        await kwargs["connection"].open()
+        result = await func(*args, **kwargs)
         return result
 
     return wrapper
