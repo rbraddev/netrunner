@@ -31,7 +31,9 @@ hosts = [
 ]
 
 
-# Here is a task. The first parameter is the host and must be provided. Other parameters can also be passed into the tasks/functions. Please see the examples in the example folder.
+# Here is a task. The first parameter is the host and must be provided.
+# Other parameters can also be passed into the tasks/functions.
+# Please see the examples in the example folder.
 async def first_task(host):
     # Commands must be passed in via a list. By default the output is parsed using
     # Genie, but parse can be set to False if raw output is required
