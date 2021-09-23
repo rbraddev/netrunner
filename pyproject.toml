@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "netrunner"
-version = "0.1.4"
+version = "0.1.5"
 description = "Network asyncio command runner using Scrapli"
 authors = ["Ryan Bradshaw <ryan@rbradshaw.dev>"]
 repository = "https://github.com/rbraddev/netrunner"
