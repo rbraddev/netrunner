@@ -37,7 +37,7 @@ hosts = [
 async def first_task(host):
     # Commands must be passed in via a list. By default the output is parsed using
     # Genie, but parse can be set to False if raw output is required
-    result = await host.send_command(cmds=["show version", "show vlan"])
+    result = await host.send_command(["show version", "show vlan"])
     return result
 
 
